@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neurosurgery Referral — JIPMER</title>
+<style>
+  :root {
+    --navy:       #1B2B4B;
+    --navy-lt:    #2C4170;
+    --red:        #B91C1C;
+    --amber:      #B45309;
+    --green:      #15803D;
+    --red-bg:     #FEF2F2;
+    --amber-bg:   #FFFBEB;
+    --green-bg:   #F0FDF4;
+    --border:     #D1D9E6;
+    --text:       #111827;
+    --muted:      #6B7280;
+    --bg:         #EEF2F9;
+    --white:      #FFFFFF;
+    --in-border:  #C4CCDA;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    color: #fff;
+    padding: 16px 20px 14px;
+    text-align: center;
+  }
+  .header .inst {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 3px;
+  }
+  .header h1 {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+  }
+  .header .sub {
+    font-size: 11px;
+    opacity: 0.55;
+    margin-top: 2px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 18px 14px 48px;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+
+  .sec {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--navy);
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+    margin-top: 20px;
+  }
+  .sec:first-child { margin-top: 0; }
+
+  /* ── FIELDS ── */
+  .field { margin-bottom: 13px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 5px;
+  }
+  .field label .req { color: var(--red); margin-left: 2px; }
+
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--in-border);
+    border-radius: 6px;
+    font-size: 15px;
+    color: var(--text);
+    background: #fff;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(27,43,75,0.10);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 68px;
+    line-height: 1.5;
+  }
+  .field .err {
+    display: none;
+    color: var(--red);
+    font-size: 11px;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .field input.invalid,
+  .field textarea.invalid { border-color: var(--red); }
+
+  /* ── GRID ── */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── URGENCY ── */
+  .urg-wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  .urg-opt { position: relative; }
+  .urg-opt input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+  .urg-opt label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 10px 4px 9px;
+    border-radius: 7px;
+    border: 2px solid var(--in-border);
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: #fff;
+    transition: all 0.13s;
+    -webkit-user-select: none;
+    user-select: none;
+    margin-bottom: 0 !important;
+  }
+  .urg-opt label .icon { font-size: 18px; line-height: 1; }
+
+  .urg-opt input[value="Emergency"]:checked + label { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+  .urg-opt input[value="Urgent"]:checked    + label { border-color: var(--amber); background: var(--amber-bg); color: var(--amber); }
+  .urg-opt input[value="Routine"]:checked   + label { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+
+  /* ── SUBMIT ── */
+  .btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    margin-top: 4px;
+    font-family: inherit;
+    transition: background 0.14s, transform 0.1s;
+  }
+  .btn-submit:hover  { background: var(--navy-lt); }
+  .btn-submit:active { transform: scale(0.985); }
+
+  /* ── SUMMARY CARD ── */
+  #summary-section { display: none; }
+
+  .ok-notice {
+    background: var(--green-bg);
+    border: 1.5px solid var(--green);
+    border-radius: 8px;
+    padding: 11px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .sum-card {
+    background: #fff;
+    border: 2px solid var(--navy);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .sum-head {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 16px 12px;
+  }
+  .sum-head .sh-inst {
+    font-size: 9.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-bottom: 3px;
+  }
+  .sum-head .sh-name {
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .sum-head .sh-ts {
+    font-size: 11px;
+    opacity: 0.55;
+    margin-top: 3px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 11px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    margin-top: 9px;
+    color: #fff;
+  }
+  .badge.Emergency { background: var(--red); }
+  .badge.Urgent    { background: var(--amber); }
+  .badge.Routine   { background: var(--green); }
+
+  .sum-body { padding: 4px 0; }
+
+  .sr {
+    display: flex;
+    gap: 8px;
+    padding: 7px 16px;
+    border-bottom: 1px solid #EEF1F7;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+  .sr:last-child { border-bottom: none; }
+  .sr-l {
+    flex-shrink: 0;
+    width: 118px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-top: 2px;
+  }
+  .sr-v {
+    flex: 1;
+    font-weight: 500;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .sum-foot {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 9px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .btn-new {
+    width: 100%;
+    margin-top: 13px;
+    padding: 12px;
+    background: transparent;
+    border: 2px solid var(--navy);
+    color: var(--navy);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.14s;
+  }
+  .btn-new:hover { background: var(--navy); color: #fff; }
+
+  @media (max-width: 380px) {
+    .g2 { grid-template-columns: 1fr; }
+    .sr-l { width: 100px; font-size: 9.5px; }
+    .sum-head .sh-name { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="inst">JIPMER, Puducherry</div>
+  <h1>Neurosurgery Referral</h1>
+  <div class="sub">Department of Neurosurgery</div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════ FORM ══════════ -->
+  <div id="form-section">
+    <form id="refForm" novalidate>
+
+      <!-- Patient Details -->
+      <div class="card">
+        <div class="sec">Patient Details</div>
+
+        <div class="field">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="f-name" placeholder="Patient name" autocomplete="off">
+          <div class="err" id="e-name">Name is required</div>
+        </div>
+
+        <div class="g2">
+          <div class="field">
+            <label>Age <span class="req">*</span></label>
+            <input type="number" id="f-age" placeholder="Years" min="0" max="120">
+            <div class="err" id="e-age">Required</div>
+          </div>
+          <div class="field">
+            <label>Sex <span class="req">*</span></label>
+            <select id="f-sex">
+              <option value="" disabled selected>Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="err" id="e-sex">Required</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Hospital ID <span class="req">*</span></label>
+          <input type="text" id="f-hospitalId" placeholder="CR / IP no." autocomplete="off">
+          <div class="err" id="e-hospitalId">Required</div>
+        </div>
+
+        <div class="field">
+          <label>Complaints <span class="req">*</span></label>
+          <textarea id="f-complaints" placeholder="Chief complaints and duration"></textarea>
+          <div class="err" id="e-complaints">Required</div>
+        </div>
+
+        <div class="field">
+          <label>Comorbidities</label>
+          <input type="text" id="f-comorbidities" placeholder="DM, HTN, CKD — or Nil">
+        </div>
+
+        <div class="field">
+          <label>Diagnosis</label>
+          <input type="text" id="f-diagnosis" placeholder="Provisional / confirmed diagnosis">
+        </div>
+
+        <div class="field">
+          <label>Time of Onset of Symptoms</label>
+          <input type="text" id="f-onsetTime" placeholder="e.g. 6 hours ago / 02:00 today">
+        </div>
+      </div>
+
+      <!-- Neurological Status -->
+      <div class="card">
+        <div class="sec">Neurological Status</div>
+
+        <div class="g2">
+          <div class="field">
+            <label>GCS <span class="req">*</span></label>
+            <input type="text" id="f-gcs" placeholder="e.g. E3V4M5 = 12">
+            <div class="err" id="e-gcs">Required</div>
+          </div>
+          <div class="field">
+            <label>Pupils</label>
+            <input type="text" id="f-pupils" placeholder="e.g. B/L 3mm reacting">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Examination Findings</label>
+          <textarea id="f-examination" placeholder="Focal deficits, tone, reflexes, plantars…"></textarea>
+        </div>
+
+        <div class="field">
+          <label>CT Findings</label>
+          <textarea id="f-ctFindings" placeholder="Relevant CT / MRI findings"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Other Relevant Info</label>
+          <input type="text" id="f-otherInfo" placeholder="INR, platelets, Na⁺, or other labs">
+        </div>
+      </div>
+
+      <!-- Referral Details -->
+      <div class="card">
+        <div class="sec">Referral Details</div>
+
+        <div class="field">
+          <label>Department <span class="req">*</span></label>
+          <input type="text" id="f-department" placeholder="e.g. Medicine, Cardiology">
+          <div class="err" id="e-department">Required</div>
+        </div>
+
+        <div class="g2">
+          <div class="field">
+            <label>Unit</label>
+            <input type="text" id="f-unit" placeholder="e.g. Unit II">
+          </div>
+          <div class="field">
+            <label>Ward</label>
+            <input type="text" id="f-ward" placeholder="e.g. Ward 8B">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Reason for Referral <span class="req">*</span></label>
+          <textarea id="f-referralReason" placeholder="Why is neurosurgery opinion sought?"></textarea>
+          <div class="err" id="e-referralReason">Required</div>
+        </div>
+
+        <div class="g2">
+          <div class="field">
+            <label>Referring Resident <span class="req">*</span></label>
+            <input type="text" id="f-referringResident" placeholder="Name">
+            <div class="err" id="e-referringResident">Required</div>
+          </div>
+          <div class="field">
+            <label>Contact Number <span class="req">*</span></label>
+            <input type="tel" id="f-contactNumber" placeholder="Mobile number">
+            <div class="err" id="e-contactNumber">Required</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Urgency Status <span class="req">*</span></label>
+          <div class="urg-wrap">
+            <div class="urg-opt">
+              <input type="radio" name="urgency" id="u-em" value="Emergency">
+              <label for="u-em"><span class="icon">🔴</span>Emergency</label>
+            </div>
+            <div class="urg-opt">
+              <input type="radio" name="urgency" id="u-ur" value="Urgent">
+              <label for="u-ur"><span class="icon">🟡</span>Urgent</label>
+            </div>
+            <div class="urg-opt">
+              <input type="radio" name="urgency" id="u-ro" value="Routine">
+              <label for="u-ro"><span class="icon">🟢</span>Routine</label>
+            </div>
+          </div>
+          <div class="err" id="e-urgency">Select urgency status</div>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Referral →</button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ══════════ SUMMARY ══════════ -->
+  <div id="summary-section">
+    <div class="ok-notice">✓ Referral recorded — screenshot the card below and share in the group.</div>
+
+    <div class="sum-card">
+      <div class="sum-head">
+        <div class="sh-inst">Neurosurgery Referral · JIPMER, Puducherry</div>
+        <div class="sh-name" id="s-name"></div>
+        <div class="sh-ts"  id="s-ts"></div>
+        <div><span class="badge" id="s-badge"></span></div>
+      </div>
+
+      <div class="sum-body">
+        <div class="sr"><span class="sr-l">Hospital ID</span><span class="sr-v" id="s-hospitalId"></span></div>
+        <div class="sr"><span class="sr-l">Age</span><span class="sr-v" id="s-age"></span></div>
+        <div class="sr"><span class="sr-l">Sex</span><span class="sr-v" id="s-sex"></span></div>
+        <div class="sr"><span class="sr-l">Department</span><span class="sr-v" id="s-department"></span></div>
+        <div class="sr"><span class="sr-l">Unit</span><span class="sr-v" id="s-unit"></span></div>
+        <div class="sr"><span class="sr-l">Ward</span><span class="sr-v" id="s-ward"></span></div>
+        <div class="sr"><span class="sr-l">Complaints</span><span class="sr-v" id="s-complaints"></span></div>
+        <div class="sr"><span class="sr-l">Comorbidities</span><span class="sr-v" id="s-comorbidities"></span></div>
+        <div class="sr"><span class="sr-l">Diagnosis</span><span class="sr-v" id="s-diagnosis"></span></div>
+        <div class="sr"><span class="sr-l">Onset</span><span class="sr-v" id="s-onsetTime"></span></div>
+        <div class="sr"><span class="sr-l">GCS</span><span class="sr-v" id="s-gcs"></span></div>
+        <div class="sr"><span class="sr-l">Pupils</span><span class="sr-v" id="s-pupils"></span></div>
+        <div class="sr"><span class="sr-l">Examination</span><span class="sr-v" id="s-examination"></span></div>
+        <div class="sr"><span class="sr-l">CT Findings</span><span class="sr-v" id="s-ctFindings"></span></div>
+        <div class="sr"><span class="sr-l">Other Info</span><span class="sr-v" id="s-otherInfo"></span></div>
+        <div class="sr"><span class="sr-l">Reason</span><span class="sr-v" id="s-referralReason"></span></div>
+        <div class="sr"><span class="sr-l">Referring</span><span class="sr-v" id="s-referringResident"></span></div>
+        <div class="sr"><span class="sr-l">Contact</span><span class="sr-v" id="s-contactNumber"></span></div>
+      </div>
+
+      <div class="sum-foot">
+        <span>Dept. of Neurosurgery, JIPMER</span>
+        <span id="s-foot-id"></span>
+      </div>
+    </div>
+
+    <button class="btn-new" onclick="resetForm()">+ New Referral</button>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+//  CONFIGURATION — replace with your Apps Script Web App URL
+//  after deploying the Google Apps Script (see instructions)
+// ─────────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxjFVswhvmcxgi4Lw97YfgfYFd6KpJcRjgcIavUkwJREdyiZ6q9YRkgBfsxk1rtXNbM-g/exec';
+// ─────────────────────────────────────────────────────────────
+
+const REQUIRED = [
+  'name', 'age', 'sex', 'hospitalId', 'complaints',
+  'gcs', 'department', 'referralReason',
+  'referringResident', 'contactNumber'
+];
+
+document.getElementById('refForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!validate()) return;
+  const data = collect();
+  render(data);
+  send(data);
+  document.getElementById('form-section').style.display   = 'none';
+  document.getElementById('summary-section').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+function validate() {
+  let ok = true;
+  REQUIRED.forEach(id => {
+    const inp = document.getElementById('f-' + id);
+    const err = document.getElementById('e-' + id);
+    const empty = inp.tagName === 'SELECT' ? !inp.value : !inp.value.trim();
+    if (empty) {
+      inp.classList.add('invalid');
+      if (err) err.style.display = 'block';
+      ok = false;
+    } else {
+      inp.classList.remove('invalid');
+      if (err) err.style.display = 'none';
+    }
+  });
+  const urg = document.querySelector('input[name="urgency"]:checked');
+  const eu  = document.getElementById('e-urgency');
+  if (!urg) { eu.style.display = 'block'; ok = false; }
+  else       { eu.style.display = 'none'; }
+  if (!ok) document.querySelector('.invalid, .err[style*="block"]')
+    ?.scrollIntoView({ behavior:'smooth', block:'center' });
+  return ok;
+}
+
+function collect() {
+  const now = new Date();
+  const p   = n => String(n).padStart(2, '0');
+  const ts  = `${p(now.getDate())}/${p(now.getMonth()+1)}/${now.getFullYear()}  ${p(now.getHours())}:${p(now.getMinutes())}`;
+  const v   = id => document.getElementById('f-' + id).value.trim() || '—';
+  return {
+    timestamp:          ts,
+    name:               document.getElementById('f-name').value.trim(),
+    age:                document.getElementById('f-age').value.trim(),
+    sex:                document.getElementById('f-sex').value,
+    hospitalId:         document.getElementById('f-hospitalId').value.trim(),
+    department:         document.getElementById('f-department').value.trim(),
+    unit:               v('unit'),
+    ward:               v('ward'),
+    complaints:         document.getElementById('f-complaints').value.trim(),
+    comorbidities:      v('comorbidities'),
+    diagnosis:          v('diagnosis'),
+    onsetTime:          v('onsetTime'),
+    gcs:                document.getElementById('f-gcs').value.trim(),
+    pupils:             v('pupils'),
+    examination:        v('examination'),
+    ctFindings:         v('ctFindings'),
+    otherInfo:          v('otherInfo'),
+    referralReason:     document.getElementById('f-referralReason').value.trim(),
+    referringResident:  document.getElementById('f-referringResident').value.trim(),
+    contactNumber:      document.getElementById('f-contactNumber').value.trim(),
+    urgency:            document.querySelector('input[name="urgency"]:checked').value
+  };
+}
+
+function render(d) {
+  document.getElementById('s-name').textContent      = d.name;
+  document.getElementById('s-ts').textContent        = d.timestamp;
+  document.getElementById('s-foot-id').textContent   = 'ID: ' + d.hospitalId;
+  const badge = document.getElementById('s-badge');
+  badge.textContent  = d.urgency.toUpperCase();
+  badge.className    = 'badge ' + d.urgency;
+  [
+    'hospitalId','age','sex','department','unit','ward','complaints','comorbidities',
+    'diagnosis','onsetTime','gcs','pupils','examination','ctFindings','otherInfo',
+    'referralReason','referringResident','contactNumber'
+  ].forEach(f => {
+    const el = document.getElementById('s-' + f);
+    if (el) el.textContent = d[f];
+  });
+}
+
+function send(data) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {});
+}
+
+function resetForm() {
+  document.getElementById('refForm').reset();
+  document.getElementById('f-sex').selectedIndex = 0;
+  REQUIRED.forEach(id => {
+    document.getElementById('f-' + id).classList.remove('invalid');
+    const e = document.getElementById('e-' + id);
+    if (e) e.style.display = 'none';
+  });
+  document.getElementById('e-urgency').style.display = 'none';
+  document.getElementById('summary-section').style.display = 'none';
+  document.getElementById('form-section').style.display   = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
